@@ -14,5 +14,5 @@ pub = rsa.PubKey(key_factory) #create the public key from  key_factory
 priv = rsa.PrivKey(key_factory) #create the private key from key_factory
 
 encrypted_data = pub.encrypt(42) #encrypt the number 42
-assert priv.decrypt(encrypted_data) #decrypting encrypted_data should give you 42
+assert priv.decrypt(encrypted_data) == 42 #decrypting encrypted_data should give you 42
 ````
