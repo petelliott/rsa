@@ -7,12 +7,12 @@ rsa.py is an implementation of the RSA algorithm written in python 3. It should 
 ## use
 
 ````python
-import rsa.py
+import rsa
 
 key_factory = rsa.KeyFactory(1024) #create a key factory of 1024 bits
 pub = rsa.PubKey(key_factory) #create the public key from  key_factory
 priv = rsa.PrivKey(key_factory) #create the private key from key_factory
 
 encrypted_data = pub.encrypt(42) #encrypt the number 42
-assert priv.decrypt(encrypted_data) #decrypting encrypted_data should give you 42
+assert priv.decrypt(encrypted_data) == 42 #decrypting encrypted_data should give you 42
 ````
