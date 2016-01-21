@@ -7,7 +7,7 @@ rsa.py is an implementation of the RSA algorithm written in python 3. It should 
 ## use
 
 ````python
-import rsa.py
+import rsa
 
 key_factory = rsa.KeyFactory(1024) #create a key factory of 1024 bits
 pub = rsa.PubKey(key_factory) #create the public key from  key_factory
