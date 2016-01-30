@@ -58,8 +58,8 @@ def euclid(a, b):
     return a
 
 
-def coPrime(a,b):
-    if euclid(a,b) == 1:
+def coPrime(a, b):
+    if euclid(a, b) == 1:
         return True
     else:
         return False
@@ -88,13 +88,28 @@ def randCoprime(key_size, num):
             return out
 
 
+def toInt(text):
+    num = 0
+    for a, b in enumerate(text):
+        num += ord(b) << (a*8)
+    return num
+
+
+def fromInt(num):
+    text = ""
+    while num > 0:
+        text += chr(num & 0xff)
+        num = num >> 8
+    return text
+
+
 class KeyFactory:
     def __init__(self, key_size):
         prime1 = genPrime(key_size)
         prime2 = genPrime(key_size)
 
         n = prime1*prime2
-        totient = (prime1-1) * ( prime2-1)
+        totient = (prime1-1) * (prime2-1)
         e = randCoprime(key_size, totient)
         d = modInv(e, totient)
 
@@ -103,19 +118,39 @@ class KeyFactory:
         self.priv_exp = d
 
 
-class PrivKey:
-    def __init__(self,key_factory):
-        self.exponent = key_factory.priv_exp
-        self.modulos = key_factory.modulos
+class Key:
+    def __init__(self, exp, mod):
+        self.exponent = exp
+        self.modulos = mod
 
-    def decrypt(self, data):
+    def crypt(self, data):
         return pow(data, self.exponent, self.modulos)
 
+    def __str__(self):
+        return (hex(self.exponent) + "%" + hex(self.modulos)).replace("0x", "")
 
-class PubKey:
-    def __init__(self, key_factory):
-        self.exponent = key_factory.pub_exp
-        self.modulos = key_factory.modulos
+
+class PubKey(Key):
+    def __init__(self, key_data):
+        if type(key_data) is KeyFactory:
+            super().__init__(key_data.pub_exp, key_data.modulos)
+        if type(key_data) is str:
+            parts = key_data.split("%")
+            super().__init__(int(parts[0], 16), int(parts[1], 16))
 
     def encrypt(self, data):
-        return pow(data, self.exponent, self.modulos)
+        cypher_data = self.crypt(toInt(data))
+        return hex(cypher_data).replace("0x", "")
+
+
+class PrivKey(Key):
+    def __init__(self, key_data):
+        if type(key_data) is KeyFactory:
+            super().__init__(key_data.priv_exp, key_data.modulos)
+        if type(key_data) is str:
+            parts = key_data.split("%")
+            super().__init__(parts[0], parts[1])
+
+    def decrypt(self, data):
+        cypher_data = self.crypt(int(data, 16))
+        return fromInt(cypher_data)
