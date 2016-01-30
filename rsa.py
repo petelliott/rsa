@@ -135,9 +135,11 @@ class PubKey(Key):
         if type(key_data) is KeyFactory:
             super().__init__(key_data.pub_exp, key_data.modulos)
 
-        if type(key_data) is str:
+        elif type(key_data) is str:
             parts = key_data.split("%")
             super().__init__(int(parts[0], 16), int(parts[1], 16))
+
+        else: raise TypeError("can't create a key from this")
 
     def encrypt(self, data):
         cypher_data = self.crypt(toInt(data))
@@ -149,9 +151,11 @@ class PrivKey(Key):
         if type(key_data) is KeyFactory:
             super().__init__(key_data.priv_exp, key_data.modulos)
 
-        if type(key_data) is str:
+        elif type(key_data) is str:
             parts = key_data.split("%")
             super().__init__(parts[0], parts[1])
+
+        else: raise TypeError("can't create a key from this")
 
     def decrypt(self, data):
         cypher_data = self.crypt(int(data, 16))
