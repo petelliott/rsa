@@ -134,6 +134,7 @@ class PubKey(Key):
     def __init__(self, key_data):
         if type(key_data) is KeyFactory:
             super().__init__(key_data.pub_exp, key_data.modulos)
+
         if type(key_data) is str:
             parts = key_data.split("%")
             super().__init__(int(parts[0], 16), int(parts[1], 16))
@@ -147,6 +148,7 @@ class PrivKey(Key):
     def __init__(self, key_data):
         if type(key_data) is KeyFactory:
             super().__init__(key_data.priv_exp, key_data.modulos)
+
         if type(key_data) is str:
             parts = key_data.split("%")
             super().__init__(parts[0], parts[1])
