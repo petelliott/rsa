@@ -1,5 +1,6 @@
 import random
 import math
+import hashlib
 
 
 def rand(size):
@@ -103,6 +104,11 @@ def fromInt(num):
     return text
 
 
+def sha256(string):
+    hash_value = hashlib.sha256(bytes(string, "utf-8")).hexdigest()
+    return int(hash_value, 16)
+
+
 class KeyFactory:
     def __init__(self, key_size):
         prime1 = genPrime(key_size)
@@ -145,6 +151,10 @@ class PubKey(Key):
         cypher_data = self.crypt(toInt(data))
         return hex(cypher_data).replace("0x", "")
 
+    def verify(self, signature, message):
+        hash_value = self.crypt(int(signature, 16))
+        return hash_value == sha256(message)
+
 
 class PrivKey(Key):
     def __init__(self, key_data):
@@ -160,3 +170,8 @@ class PrivKey(Key):
     def decrypt(self, data):
         cypher_data = self.crypt(int(data, 16))
         return fromInt(cypher_data)
+
+    def sign(self, data):
+        hash_value = sha256(data)
+        cypher_data = self.crypt(hash_value)
+        return hex(cypher_data).replace("0x", "")
