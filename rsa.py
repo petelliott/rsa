@@ -1,5 +1,6 @@
 import random
 import math
+import hashlib
 
 
 def rand(size):
@@ -103,6 +104,11 @@ def fromInt(num):
     return text
 
 
+def sha256(string):
+    hash_value = hashlib.sha256(bytes(string, "utf-8")).hexdigest()
+    return int(hash_value, 16)
+
+
 class KeyFactory:
     def __init__(self, key_size):
         prime1 = genPrime(key_size)
@@ -135,13 +141,19 @@ class PubKey(Key):
         if type(key_data) is KeyFactory:
             super().__init__(key_data.pub_exp, key_data.modulos)
 
-        if type(key_data) is str:
+        elif type(key_data) is str:
             parts = key_data.split("%")
             super().__init__(int(parts[0], 16), int(parts[1], 16))
+
+        else: raise TypeError("can't create a key from this")
 
     def encrypt(self, data):
         cypher_data = self.crypt(toInt(data))
         return hex(cypher_data).replace("0x", "")
+
+    def verify(self, signature, message):
+        hash_value = self.crypt(int(signature, 16))
+        return hash_value == sha256(message)
 
 
 class PrivKey(Key):
@@ -149,10 +161,17 @@ class PrivKey(Key):
         if type(key_data) is KeyFactory:
             super().__init__(key_data.priv_exp, key_data.modulos)
 
-        if type(key_data) is str:
+        elif type(key_data) is str:
             parts = key_data.split("%")
             super().__init__(parts[0], parts[1])
+
+        else: raise TypeError("can't create a key from this")
 
     def decrypt(self, data):
         cypher_data = self.crypt(int(data, 16))
         return fromInt(cypher_data)
+
+    def sign(self, data):
+        hash_value = sha256(data)
+        cypher_data = self.crypt(hash_value)
+        return hex(cypher_data).replace("0x", "")

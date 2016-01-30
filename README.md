@@ -17,6 +17,9 @@ encrypted_data = pub.encrypt("hello world") #encrypt the String "hello world"
 assert priv.decrypt(encrypted_data) == "hello world"
 #decrypting encrypted_data should give you "hello world"
 
+signature = priv.sign("hello world") #sign "hello world"
+assert pub.verify(signature,"hello world") #verifies as True
+
 #keys can be saved as strings
 plain_text = str(pub)
 pub2 = rsa.PubKey(plain_text)
