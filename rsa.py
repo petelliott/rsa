@@ -1,5 +1,4 @@
 import random
-import math
 import hashlib
 
 
@@ -24,7 +23,7 @@ def is_probable_prime(n):
             break
         s += 1
         d = quotient
-    assert(2**s * d == n-1)
+    assert 2**s * d == n-1
 
     def try_composite(a):
         if pow(a, d, n) == 1:
@@ -34,7 +33,7 @@ def is_probable_prime(n):
                 return False
         return True
 
-    for i in range(_mrpt_num_trials):
+    for _ in range(_mrpt_num_trials):
         a = random.randrange(2, n)
         if try_composite(a):
             return False
@@ -60,10 +59,7 @@ def euclid(a, b):
 
 
 def coPrime(a, b):
-    if euclid(a, b) == 1:
-        return True
-    else:
-        return False
+    return euclid(a, b) == 1
 
 
 def extendedEuclid(a, b):
@@ -138,14 +134,15 @@ class Key:
 
 class PubKey(Key):
     def __init__(self, key_data):
-        if type(key_data) is KeyFactory:
+        if isinstance(key_data, KeyFactory):
             super().__init__(key_data.pub_exp, key_data.modulos)
 
-        elif type(key_data) is str:
+        elif isinstance(key_data, str):
             parts = key_data.split("%")
             super().__init__(int(parts[0], 16), int(parts[1], 16))
 
-        else: raise TypeError("can't create a key from this")
+        else:
+            raise TypeError("can't create a key from this")
 
     def encrypt(self, data):
         cypher_data = self.crypt(toInt(data))
@@ -158,14 +155,15 @@ class PubKey(Key):
 
 class PrivKey(Key):
     def __init__(self, key_data):
-        if type(key_data) is KeyFactory:
+        if isinstance(key_data, KeyFactory):
             super().__init__(key_data.priv_exp, key_data.modulos)
 
-        elif type(key_data) is str:
+        elif isinstance(key_data, str):
             parts = key_data.split("%")
             super().__init__(parts[0], parts[1])
 
-        else: raise TypeError("can't create a key from this")
+        else:
+            raise TypeError("can't create a key from this")
 
     def decrypt(self, data):
         cypher_data = self.crypt(int(data, 16))
