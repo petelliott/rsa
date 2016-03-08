@@ -58,10 +58,6 @@ def euclid(a, b):
     return a
 
 
-def coPrime(a, b):
-    return euclid(a, b) == 1
-
-
 def extendedEuclid(a, b):
     if a == 0:
         return b, 0, 1
@@ -71,7 +67,7 @@ def extendedEuclid(a, b):
 
 
 def modInv(a, m):
-    if coPrime(a, m):
+    if euclid(a, m) == 1:
         linearCombination = extendedEuclid(a, m)
         return linearCombination[1] % m
     else:
@@ -81,7 +77,7 @@ def modInv(a, m):
 def randCoprime(key_size, num):
     while True:
         out = rand(key_size)
-        if coPrime(out, num):
+        if euclid(out, num) == 1:
             return out
 
 
