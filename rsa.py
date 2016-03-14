@@ -108,8 +108,8 @@ class KeyFactory:
 
         n = prime1*prime2
         totient = (prime1-1) * (prime2-1)
-        d = randCoprime(key_size, totient)
-        e = modInv(d, totient)
+        e = randCoprime(key_size, totient)
+        d = modInv(e, totient)
 
         self.modulos = n
         self.pub_exp = e
