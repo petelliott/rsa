@@ -116,7 +116,7 @@ class KeyFactory:
         self.priv_exp = d
 
 
-class Key:
+class Key(object):
     def __init__(self, exp, mod):
         self.exponent = exp
         self.modulos = mod
